@@ -616,6 +616,6 @@ uint32_t millis() {
 	struct timespec tp;
         static int      oldms = 0;
         clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
-        int ms=tp.tv_sec + tp.tv_nsec/1000000;                      // get milliseconds
+        int ms=tp.tv_sec*1000 + tp.tv_nsec/1000000;                      // get milliseconds
 	return ms;
 }

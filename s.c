@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	struct timespec tp;
 	static int 	oldms = 0;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &tp);
-	int ms=tp.tv_nsec/1000000;			// get milliseconds
+	int ms=tp.tv_sec*1000 + tp.tv_nsec/1000000;			// get milliseconds
 	if (ms < oldms) oldms=oldms-1000;				
 	if ((ms-oldms) >= 50 || (oldms== 0)) {
 		oldms=ms;
