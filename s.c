@@ -29,7 +29,7 @@
 #define GPIO_PIN                18
 #define DMA                     10
 #define STRIP_TYPE            WS2811_STRIP_GRB		// WS2812/SK6812RGB integrated chip+leds
-#define LED_COUNT		64*5
+#define LED_COUNT		1792
 
 #define ChanceOfTwinkles	70
 #define ChanceOfGlitter		5
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 	if ((ms-oldms) >= 50 || (oldms== 0)) {
 		oldms=ms;
 		// your code goes here
-		gHue++;
+		// gHue++;
 		}
 	}
 
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 
 
         // 50 frames /sec
-  //      usleep(1000000 / 50);
+        usleep(1000000 / 50);
     }
 
     if (clear_on_exit) {
