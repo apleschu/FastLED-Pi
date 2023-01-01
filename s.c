@@ -30,6 +30,7 @@
 #define DMA                     10
 #define STRIP_TYPE            WS2811_STRIP_GRB		// WS2812/SK6812RGB integrated chip+leds
 #define LED_COUNT		1792
+#define MatrixWidth		32
 
 #define ChanceOfTwinkles	70
 #define ChanceOfGlitter		5
@@ -89,7 +90,6 @@ void twinkles(ws2811_led_t m[]) {
 }
 
 // XY mapping for sperpentine matrix layout
-/*
 uint16_t XY(int x, int y) {
         uint16_t i;
 
@@ -101,10 +101,8 @@ uint16_t XY(int x, int y) {
                 // Even rows run forwards
                 i = (y * MatrixWidth) + x;
                 }       
-        }       
         return i;
 }
-*/
 
 					
 int main(int argc, char *argv[])
@@ -141,8 +139,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	twinkles(matrix);
-	addGlitter(matrix);
+//	twinkles(matrix);
+//	addGlitter(matrix);
 
 //	fill_rainbow(matrix, LED_COUNT, gHue, 10);
 	
