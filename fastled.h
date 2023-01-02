@@ -568,9 +568,9 @@ void hsv2rgb( struct CHSV *hsv, struct CRGBW *rgb ) {
     }
 }
 
-struct CRGBW RED=   {00, 0xff, 00, 00};
-struct CRGBW GREEN= {00, 00, 0xff, 00};
-struct CRGBW BLUE = {00, 00, 00, 0xff};
+//struct CRGBW RED=   {00, 0xff, 00, 00};
+//struct CRGBW GREEN= {00, 00, 0xff, 00};
+//struct CRGBW BLUE = {00, 00, 00, 0xff};
 
 void Show(ws2811_led_t m[], struct ws2811_t *l) {
 	int ret;
