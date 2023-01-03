@@ -68,12 +68,6 @@ static void setup_handlers(void)
     sigaction(SIGTERM, &sa, NULL);
 }
 
-void addGlitter(ws2811_led_t m[]) {
-	if (crandom(100) > (100-ChanceOfGlitter)) { 			// give it a 5% chance
-		m[crandom(LED_COUNT)] = 0xFFFFFF; 	// random pixel bright white
-	}
-}
-
 /********************************************************************************
 *
 * There are literally hundreds of ways how a two dimensional array may be set up
@@ -131,6 +125,17 @@ void drawString(char *s, ws2811_led_t m[], int x, int y, struct CRGBW rgb) {
 		drawChar(s[i], m, xpos, y, rgb);
 	}
 }
+
+void readValues(char *temp, char *humidity) {
+	FILE *fp;
+
+	fp = fopen("/tmp/temperature","r");
+	fscanf(fp,"%4s", temp);
+	fclose(fp);
+	fp = fopen("/tmp/humidity","r");
+	fscanf(fp,"%4s", humidity);
+	fclose(fp);
+}
 					
 int main(int argc, char *argv[])
 {
@@ -140,6 +145,11 @@ int main(int argc, char *argv[])
 	ws2811_led_t *leds;
 	time_t t;
 	struct tm *tim;
+	char temperature[10];
+	char humidity[10];
+
+	sprintf(temperature,"UNKN");
+	sprintf(humidity,"UNKN");
 
     matrix = malloc(sizeof(ws2811_led_t) * led_count);
 
@@ -161,38 +171,11 @@ int main(int argc, char *argv[])
 		char dstring[20];
 		char ystring[20];
 		char *mstring;
-		char *wstring;
 
 
 		sprintf(tstring, "%02d:%02d:%02d", tim->tm_hour, tim->tm_min, tim->tm_sec);
 		sprintf(dstring, "%02d,",tim->tm_mday);
 		sprintf(ystring, "%4d", tim->tm_year+1900);
-		switch (tim->tm_wday) {
-			case 0:
-				wstring=" Sunday";
-				break;
-			case 1:
-				wstring=" Monday";
-				break;
-			case 2:
-				wstring=" Tuesday";
-				break;
-			case 3:
-				wstring="Wednesday";
-				break;
-			case 4:
-				wstring="Thursday";
-				break;
-			case 5:
-				wstring=" Friday";
-				break;
-			case 6:
-				wstring="Saturday";
-				break;
-			default:
-				wstring="UNKNOWN";
-				break;
-		}
 		switch (tim->tm_mon) {
 			case 0:
 				mstring="Jan";
@@ -235,11 +218,21 @@ int main(int argc, char *argv[])
 				break;
 		}
 
-		drawString(tstring, matrix, 9,0, K1900);
-		drawString(wstring, matrix, 0,FontHeight, YELLOW);
-		drawString(mstring, matrix, 2, 2*FontHeight, BLUE);
-		drawString(dstring, matrix, FontWidth*4+1, 2*FontHeight, BLUE);
-		drawString(ystring, matrix, FontWidth*7+2, 2*FontHeight, BLUE);
+		// Read the temperature and humidity values from the filesystem once every minute
+		// These values should be written arounbd the second 0 so we read them at second 5
+
+		if (tim->tm_sec == 5) {
+			readValues(temperature, humidity);
+		}
+
+		drawString(tstring, matrix, 9,1, K1900);
+		drawString(mstring, matrix, 2, FontHeight+1, BLUE);
+		drawString(dstring, matrix, FontWidth*4+1, FontHeight+1, BLUE);
+		drawString(ystring, matrix, FontWidth*7+2, FontHeight+1, BLUE);
+		drawString(temperature, matrix, 2, 2*FontHeight+1, RED);
+		drawString("C", matrix, 4*FontWidth+2, 2*FontHeight+1, RED);
+		drawString(humidity, matrix, FontWidth*6+2, 2*FontHeight+1, RED);
+		drawString("%", matrix, 10*FontWidth+2, 2*FontHeight+1, RED);
 
 	
 		Show(matrix, &ledstring);
