@@ -136,6 +136,19 @@ void readValues(char *temp, char *humidity) {
 	fscanf(fp,"%4s", humidity);
 	fclose(fp);
 }
+
+int readBrightness() {
+	FILE * fp;
+	int brightness;
+
+	if ((fp = fopen("/var/www/html/clockBrightness","r")) != NULL) {
+		fscanf(fp,"%d",&brightness);
+		fclose(fp);
+		return(brightness);
+		}
+	else
+		return(-1);
+}
 					
 int main(int argc, char *argv[])
 {
@@ -171,6 +184,7 @@ int main(int argc, char *argv[])
 		char dstring[20];
 		char ystring[20];
 		char *mstring;
+		int oldsec;
 
 
 		sprintf(tstring, "%02d:%02d:%02d", tim->tm_hour, tim->tm_min, tim->tm_sec);
@@ -221,9 +235,16 @@ int main(int argc, char *argv[])
 		// Read the temperature and humidity values from the filesystem once every minute
 		// These values should be written arounbd the second 0 so we read them at second 5
 
-		if (tim->tm_sec == 5) {
+		if ((tim->tm_sec == 5) && (oldsec != tim->tm_sec)) {
 			readValues(temperature, humidity);
 		}
+		if (((tim->tm_sec % 10) == 0) && (oldsec != tim->tm_sec)) {
+			if (( brightness = readBrightness()) != -1) 
+				setBrightness(&ledstring, brightness);
+		}
+
+		if (oldsec != tim->tm_sec)
+			oldsec = tim->tm_sec;
 
 		drawString(tstring, matrix, 9,1, K1900);
 		drawString(mstring, matrix, 2, FontHeight+1, BLUE);
